@@ -5,6 +5,7 @@
     state: directory
     mode: 0755
     owner: "{{ runner_user }}"
+  become: true
 
 - name: Find the latest runner version (RUN ONCE)
   ansible.builtin.uri:
@@ -54,6 +55,7 @@
     mode: 0755
     marker_begin: "# BEGIN ANSIBLE MANAGED BLOCK"
     marker_end: "# END ANSIBLE MANAGED BLOCK"
+  become: true
   when: custom_env is defined
 
 - name: Check if runner service name file exist
@@ -113,6 +115,7 @@
   ansible.builtin.command: "./svc.sh install {{ runner_user }}"
   args:
     chdir: "{{ runner_dir }}"
+  become: true
   when: not runner_service_file_path.stat.exists
 
 - name: Read service name from file
@@ -126,6 +129,7 @@
     state: started
     enabled: yes
   ignore_errors: "{{ ansible_check_mode }}"
+  become: true
   when: runner_state|lower == "started"
 
 - name: STOP and disable Github Actions Runner service
